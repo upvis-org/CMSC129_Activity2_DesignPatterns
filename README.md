@@ -256,9 +256,9 @@ With Strategy Pattern, bawat algorithm hiwalay ang responsibility. Ang BasicAver
 The base review ay foundation lang siya, and we just make wrap it with a specific decorator that the user wanted to implement.
 * **Visual Diagram:**
 
+#### Without Decorator
 ```mermaid
 graph TD
-    %% WITHOUT DECORATOR SECTION
     subgraph WITHOUT_Decorator
         direction TB
         Base[BaseReview]
@@ -285,8 +285,10 @@ graph TD
         C2 --- note2
         C4 --- note3
     end
-
-    %% WITH DECORATOR SECTION
+```
+#### With Decorator
+```mermaid
+graph TD
     subgraph WITH_Decorator
         direction TB
         subgraph WrittenReviewDecorator
