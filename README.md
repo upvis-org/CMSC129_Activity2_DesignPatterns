@@ -122,27 +122,40 @@ PRINT my_vibe_check.get_vibe_summary()
   
 * **Visual Diagram:**
 
-#### Without Factory
+#### Without Strategy
 ```mermaid
 flowchart TD
-A[User submits review] --> B{Category?}
-B -->|Response Time| C[Create ResponseTimeReview]
-B -->|Conversation| D[Create ConversationQualityReview]
-B -->|Profile| E[Create ProfileAccuracyReview]
-B -->|Respect| F[Create DigitalRespectReview]
-B -->|Vibe| G[Create VibeConsistencyReview]
+    A[VibeCalculator] --> B{Check Mode Variable}
+    B -->|'standard'| C[Logic: Simple Average of all reviews]
+    B -->|'weighted'| D[Logic: Multiply by trust_level score]
+    B -->|'recent'| E[Logic: Filter reviews by date and boost]
+    
+    subgraph Hardcoded_Logic [The Haggard Part]
+    C
+    D
+    E
+    end
+    
+    style Hardcoded_Logic fill:#fff4f4,stroke:#ff0000
 ```
 
-#### With Factory
+#### With Strategy
 ```mermaid
-flowchart TD
-A[User submits review] --> B[ReviewFactory]
-B --> C{Determine Type}
-C --> D[ResponseTimeReview]
-C --> E[ConversationQualityReview]
-C --> F[ProfileAccuracyReview]
-C --> G[DigitalRespectReview]
-C --> H[VibeConsistencyReview]
+flowchart LR
+    subgraph Context [The Shell]
+    A[VibeCalculatorContext]
+    end
+
+    A -->|delegates to| B[ScoringStrategy Interface]
+
+    subgraph Strategies [The Strategy Choices]
+    B --> S1[BasicAverageStrategy]
+    B --> S2[WeightedTrustStrategy]
+    B --> S3[RecentBoostStrategy]
+    end
+
+    style Strategies fill:#f4f9ff,stroke:#007bff
+    style A fill:#f9f9f9,stroke:#333
 ```
 
   
