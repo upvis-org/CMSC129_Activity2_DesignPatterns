@@ -22,116 +22,96 @@ Other than rating them based on the given categories, users can also leave a rev
 ## Design Pattern Implementation
 
 ### 1. Creational Design Pattern
-* **Name of Pattern:** Creational - Factory
+* **Name of Pattern:** Creational - Builder
 * **Concept in Conyo:**
 
-  So yung ginagawa ng Factory Design Pattern is ini-encapsulate niya yung object creation. Instead na ang app ang bahala mag-decide kung anong object ang gagawin every time, we use a ReviewFactory to handle that process.
+ So, the real twist here is that since the 5 categories are optional and users can choose any combination—like maybe Response Time and Digital Respect lang, or everything plus a review—we use the Builder Pattern to handle that custom "stacking" logic.
 
-  In Dateboxd, users can rate their matches using different categories such as Response Time, Conversation Quality, Profile Accuracy, Digital Respect, and Vibe Consistency.
+Instead of the UI code being haggard and manually wrapping decorators every time a user clicks a checkbox, we use a ReviewBuilder. The Builder acts like a "Personal Assistant" where you just say, "Hoy, add Response Time" and "Hoy, add Respect," and then you hit .build() to get the final object.
 
-  Instead of writing multiple if-else conditions in different parts of the app to create each type of review, the app simply calls the factory method and passes the category.
-
-  Parang sinasabi lang ng app:
-  “Factory, gumawa ka ng review object for this category.”
-
-  Then the ReviewFactory na bahala mag-decide kung anong specific class (e.g., ResponseTimeReview, ConversationQualityReview, etc.) ang gagawin.
+Parang sa Subway lang or Make-Your-Own-Halo-Halo station in the city campus. You don't just order a "Standard Review"; you tell the staff, "add pearls," "add leche flan," and "add ube." The Builder follows your specific order step-by-step until the masterpiece is finished.v
 * **Visual Diagram:**
 
-#### Without Factory
+#### Without Builder
 ```mermaid
 flowchart TD
-A[User submits review] --> B{Category}
-B -->|Response Time| C[ResponseTimeReview]
-B -->|Conversation| D[ConversationQualityReview]
-B -->|Profile| E[ProfileAccuracyReview]
-B -->|Respect| F[DigitalRespectReview]
-B -->|Vibe| G[VibeConsistencyReview]
+    A[User selects 3 Categories] --> B[UI Code: Create Base]
+    B --> C[UI Code: Wrap Cat 1]
+    C --> D[UI Code: Wrap Cat 2]
+    D --> E[UI Code: Wrap Cat 3]
+    E --> F[Final Stacked Object]
+    style A fill:#f9f,stroke:#333
 ```
 
-#### With Factory
+#### With Builder
 ```mermaid
 flowchart TD
-A[User submits review] --> B[ReviewFactory]
-B --> C{Determine Type}
-C --> D[ResponseTimeReview]
-C --> E[ConversationQualityReview]
-C --> F[ProfileAccuracyReview]
-C --> G[DigitalRespectReview]
-C --> H[VibeConsistencyReview]
+    A[User Selects Categories] --> B[ReviewBuilder]
+    B -->|Step-by-step chaining| C[Final Custom Review]
+    style B fill:#bbf,stroke:#333
 ```
 
 * **Why it Works Nga:**
 
-  Without using the Factory Pattern, parang the app mismo yung nagha-handle lahat, so ang daming if-else logic scattered sa different parts of the system (like submitting reviews, editing ratings, and processing vibe scores). Medyo hassle kasi every time may gagawin ka, kailangan mo pa ulit i-check kung anong object yung icreate.
+ Without the Builder, your UI code would be filled with messy, nested constructor calls like new Respect(new Response(new Base())). Sobrang nakakahilo and prone to bugs if you miss a parenthesis or wrap them in the wrong order.
 
-  This leads to several disadvantages:
+Advantages of the Builder for Dateboxd:
 
-  - duplicated logic across different features (like paulit-ulit lang talaga yung same code everywhere)
-  - tight coupling between the app and specific review classes (super dependent yung app sa exact classes)
-  - difficult maintenance when adding new categories (pag may bagong category, ang dami mong babaguhin, not just one place)
+Fluent Interface: It allows for "chaining" methods, making the code look super clean and readable.
 
-  In Dateboxd, since ang daming review categories, mas lalong nagiging messy yung system and mas mataas yung chance na magka-errors kapag nag-update ka ng app.
+Encapsulation: The UI doesn't need to know how to wrap the Decorators; it only needs to call the simple .add...() methods.
 
-  With the Factory Pattern, mas clean na yung approach kasi all object creation is handled na by the ReviewFactory. So instead na ang app yung magde-decide, parang sinasabi lang niya, “Factory, ikaw na bahala dito.”
-
-  This reduces coupling, removes repeated logic, and makes the system easier to maintain and extend. If may new category, isang place lang (yung factory) ang babaguhin mo instead of editing multiple parts of the application, which is mas safe and less prone to errors.
+Flexibility: It perfectly handles the "pick-and-choose" nature of our app. Whether a user picks one category or all five, the Builder handles the assembly logic in one place.
 * **Pseudocode:**
 ```
-interface Review {
-    void submitReview();
-}
+# The Builder handles the step-by-step stacking of Decorators
+CLASS ReviewBuilder:
+    PRIVATE vibe_object: VibeComponent
 
-class ResponseTimeReview implements Review {
-    public void submitReview() {
-        System.out.println("Processing response time review");
-    }
-}
+    CONSTRUCTOR(match_id):
+        # Step 1: Start with the mandatory Base foundation
+        self.vibe_object = NEW BaseReview(match_id)
 
-class ConversationQualityReview implements Review {
-    public void submitReview() {
-        System.out.println("Processing conversation quality review");
-    }
-}
+    # Methods for adding specific "layers" (Decorators)
+    METHOD add_response_time(score):
+        self.vibe_object = NEW ResponseTimeDecorator(self.vibe_object, score)
+        RETURN self # Allows for chaining!
 
-class ProfileAccuracyReview implements Review {
-    public void submitReview() {
-        System.out.println("Processing profile accuracy review");
-    }
-}
+    METHOD add_conv_quality(score):
+        self.vibe_object = NEW ConvQualityDecorator(self.vibe_object, score)
+        RETURN self
 
-class DigitalRespectReview implements Review {
-    public void submitReview() {
-        System.out.println("Processing digital respect review");
-    }
-}
+    METHOD add_profile_accuracy(score):
+        self.vibe_object = NEW ProfileAccuracyDecorator(self.vibe_object, score)
+        RETURN self
 
-class VibeConsistencyReview implements Review {
-    public void submitReview() {
-        System.out.println("Processing vibe consistency review");
-    }
-}
+    METHOD add_digital_respect(score):
+        self.vibe_object = NEW DigitalRespectDecorator(self.vibe_object, score)
+        RETURN self
 
-class ReviewFactory {
-    public static Review createReview(String type) {
-        if (type.equals("response_time")) return new ResponseTimeReview();
-        else if (type.equals("conversation")) return new ConversationQualityReview();
-        else if (type.equals("profile")) return new ProfileAccuracyReview();
-        else if (type.equals("respect")) return new DigitalRespectReview();
-        else if (type.equals("vibe")) return new VibeConsistencyReview();
-        else return null;
-    }
-}
+    METHOD add_vibe_consistency(score):
+        self.vibe_object = NEW VibeConsistencyDecorator(self.vibe_object, score)
+        RETURN self
 
-class App {
-    public static void submitUserReview(String type) {
-        Review review = ReviewFactory.createReview(type);
-        if (review != null) {
-            review.submitReview();
-        } else {
-            System.out.println("Invalid review type");
-        }
-    }
-}
+    METHOD add_written_review(text):
+        self.vibe_object = NEW WrittenReviewDecorator(self.vibe_object, text)
+        RETURN self
+
+    # Step 3: Deliver the final assembled object
+    METHOD build():
+        RETURN self.vibe_object
+
+# --- IMPLEMENTATION EXAMPLE ---
+# How it looks in the Dateboxd App logic:
+builder = NEW ReviewBuilder("UPV_Match_2026")
+
+# The UI simply chains the methods based on checkboxes clicked by the student
+my_vibe_check = builder.add_response_time(5) \
+                       .add_digital_respect(4) \
+                       .add_written_review("Super green flag energy!") \
+                       .build()
+
+PRINT my_vibe_check.get_vibe_summary()
 ```
 
 ### 2. Behavioral Design Pattern
