@@ -25,11 +25,11 @@ Other than rating them based on the given categories, users can also leave a rev
 * **Name of Pattern:** Creational - Builder
 * **Concept in Conyo:**
 
- So, the real twist here is that since the 5 categories are optional and users can choose any combination—like maybe Response Time and Digital Respect lang, or everything plus a review—we use the Builder Pattern to handle that custom "stacking" logic.
+Sa app namin, optional yung 5 categories, hindi lahat needed ireview ng user. Maka-use ang user ng any combination sa categories na 'to maybe Response Time and Digital Respect lang, or everything plus a review. Dahil dito, nag-use kami ng Builder Design Pattern so it's not hassle sa devs and sa code.
 
-Instead of the UI code being haggard and manually wrapping decorators every time a user clicks a checkbox, we use a ReviewBuilder. The Builder acts like a "Personal Assistant" where you just say, "Hoy, add Response Time" and "Hoy, add Respect," and then you hit .build() to get the final object.
+Instead of the UI code being haggard and manually wrapping decorators every time a user clicks a checkbox, we make gamit of a ReviewBuilder. The Builder acts like a "Personal Assistant" where you just say, "Bro, add Response Time" and "Bro, add Respect,". If the user is satisfied sa reviews na, the program can make arat and hit .build() to get the final object.
 
-Parang sa Subway lang or Make-Your-Own-Halo-Halo station in the city campus. You don't just order a "Standard Review"; you tell the staff, "add pearls," "add leche flan," and "add ube." The Builder follows your specific order step-by-step until the masterpiece is finished.v
+Parang sa Subway lang or DIY Halo-Halo station in the city campus. You can tell the shopkeeper to "more leche flan, bro" or "more ice cream, bro." The Builder makes sabay yung order na want mo tas ginagawa niya step-by-step until oks na 'sayo.
 * **Visual Diagram:**
 
 #### Without Builder
@@ -53,15 +53,10 @@ flowchart TD
 
 * **Why it Works Nga:**
 
- Without the Builder, your UI code would be filled with messy, nested constructor calls like new Respect(new Response(new Base())). Sobrang nakakahilo and prone to bugs if you miss a parenthesis or wrap them in the wrong order.
+If hindi naimplement ang Builder pattern, your UI code would be filled with super magulo na nested constructor calls like new Respect(new Response(new Base())). Sobrang nakakahilo tsaka deins na siya readable. Besides that, prone to bugs rin siya and literally confusing like what if may nakalimutan ka na parenthesis while you make the constructor calls.
 
-Advantages of the Builder for Dateboxd:
+If nag implement ka ng Builder pattern, then boom lahat ng problems mo = solved. 'Yung code mo ay maging super malinis and super readable. 'Tas we are using encapsulation kaya no need na to make wrappers because this GOAT pattern na ang nag simplify ng method through .add...() methods. Isa pa, naging flexible ang feature since nahahandle niya ang choice ng user na mag pick one category or lahat ng categories kung bet niya. Si Builder na bahala mag assemble.
 
-Fluent Interface: It allows for "chaining" methods, making the code look super clean and readable.
-
-Encapsulation: The UI doesn't need to know how to wrap the Decorators; it only needs to call the simple .add...() methods.
-
-Flexibility: It perfectly handles the "pick-and-choose" nature of our app. Whether a user picks one category or all five, the Builder handles the assembly logic in one place.
 * **Pseudocode:**
 ```
 # The Builder handles the step-by-step stacking of Decorators
