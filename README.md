@@ -61,19 +61,19 @@ C --> H[VibeConsistencyReview]
 
 * **Why it Works Nga:**
 
-  Without using the Factory Pattern, the app needs to repeatedly use conditional (`if-else`) logic in multiple parts of the system (such as submitting reviews, editing ratings, and processing vibe scores) to determine which review object to create.  
+  Without using the Factory Pattern, parang the app mismo yung nagha-handle lahat, so ang daming if-else logic scattered sa different parts of the system (like submitting reviews, editing ratings, and processing vibe scores). Medyo hassle kasi every time may gagawin ka, kailangan mo pa ulit i-check kung anong object yung icreate.
 
   This leads to several disadvantages:
 
-  - duplicated logic across different features  
-  - tight coupling between the app and specific review classes  
-  - difficult maintenance when adding new categories  
+  - duplicated logic across different features (like paulit-ulit lang talaga yung same code everywhere)
+  - tight coupling between the app and specific review classes (super dependent yung app sa exact classes)
+  - difficult maintenance when adding new categories (pag may bagong category, ang dami mong babaguhin, not just one place)
 
-  In Dateboxd, since there are multiple review categories, this makes the system harder to manage and increases the risk of errors when updating the app.  
+  In Dateboxd, since ang daming review categories, mas lalong nagiging messy yung system and mas mataas yung chance na magka-errors kapag nag-update ka ng app.
 
-  With the Factory Pattern, all object creation is centralized in the ReviewFactory. The app no longer needs to know the exact class being instantiated and simply requests a review object based on the category.  
+  With the Factory Pattern, mas clean na yung approach kasi all object creation is handled na by the ReviewFactory. So instead na ang app yung magde-decide, parang sinasabi lang niya, “Factory, ikaw na bahala dito.”
 
-  This reduces coupling, eliminates repeated logic, and makes the system easier to maintain and extend. If a new category is added, only the factory needs to be updated instead of modifying multiple parts of the application.
+  This reduces coupling, removes repeated logic, and makes the system easier to maintain and extend. If may new category, isang place lang (yung factory) ang babaguhin mo instead of editing multiple parts of the application, which is mas safe and less prone to errors.
 * **Pseudocode:**
 ```
 interface Review {
