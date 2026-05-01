@@ -35,6 +35,29 @@ Other than rating them based on the given categories, users can also leave a rev
   
 * **Visual Diagram:**
 
+
+  Without Behavioral Design Pattern
+  ```mermaid
+  flowchart TD
+  A[Start] --> B[Receive User Data & Strategy Type]
+  B --> C{Strategy Type?}
+    
+  C -- "is BASIC?" --> D[Run Hardcoded Average Logic]
+  C -- "is SAFETY?" --> E[Run Hardcoded Weighted Respect Logic]
+  C -- "is RECENT?" --> F[Run Hardcoded Time-Decay Logic]
+  C -- "Other?" --> G[Throw Error: Unknown Type]
+    
+  D --> H[Return Final Score]
+  E --> H
+  F --> H
+  G --> H
+    
+  H --> I[End]
+
+  ```
+
+  
+  With Behavioral Design Pattern
   ```mermaid
   flowchart TD
 
