@@ -255,6 +255,66 @@ With Strategy Pattern, bawat algorithm hiwalay ang responsibility. Ang BasicAver
 
 The base review ay foundation lang siya, and we just make wrap it with a specific decorator that the user wanted to implement.
 * **Visual Diagram:**
+
+```mermaid
+graph TD
+    %% WITHOUT DECORATOR SECTION
+    subgraph WITHOUT_Decorator
+        direction TB
+        Base[BaseReview]
+        Base --> R1[ResponseTimeReview]
+        Base --> R2[ConversationQualityReview]
+        Base --> R3[DigitalRespectReview]
+        Base --> C1[ResponseTime_And_QualityReview]
+        Base --> C2[ResponseTime_And_RespectReview]
+        Base --> C3[Quality_And_RespectReview]
+        Base --> C4[ALL_COMBINED_Review]
+        
+        style C1 fill:#f96,stroke:#333
+        style C4 fill:#f96,stroke:#333
+
+        note1(❌ Too many classes!)
+        note2[❌ Combinatorial explosion!]
+        note3[❌ Hard to maintain!]
+
+        style note1 fill:none,stroke:none
+        style note2 fill:none,stroke:none
+        style note3 fill:none,stroke:none
+        
+        C1 --- note1
+        C2 --- note2
+        C4 --- note3
+    end
+
+    %% WITH DECORATOR SECTION
+    subgraph WITH_Decorator
+        direction TB
+        subgraph WrittenReviewDecorator
+            direction TB
+            subgraph ConvQualityDecorator
+                direction TB
+                subgraph ResponseTimeDecorator
+                    direction TB
+                    Core[BaseReview]
+                end
+            end
+        end
+        
+        %% Labels for the layers
+        Core --- L1[ Core object]
+        ResponseTimeDecorator --- L2[ Inner layer: adds Ghost-meter score]
+        ConvQualityDecorator --- L3[ Middle layer: adds Chat Quality]
+        WrittenReviewDecorator --- L4[ Outer layer: adds written feedback]
+
+        style L1 fill:none,stroke:none
+        style L2 fill:none,stroke:none
+        style L3 fill:none,stroke:none
+        style L4 fill:none,stroke:none
+        
+        style Core fill:#fff,stroke-dasharray: 5 5
+    end
+```
+
 * **Why it Works Nga:**
 
   Without our pinakamamahal na decorator, we need to make iba't ibang classes for the categories pati narin ang kanilang combinations na magmemake result on class explosion which is so hirap talaga to maintain sa isang dating app. Yung ating decorator makes our system to be very flexible talaga kasi we only need to wrap our base review to make dagdag the categories na want ng users irate, or if gusto nila magbigay ng review. This also adheres to the isa sa SOLID principles, yung Single Responsibility Principle kung saan each decorator only make focus sa kaniyang implementation, like yung profileAccuracyDecorator only make focus sa pagmanage ng pag-implement ng profile accuracy category, and so on, like gets ba? This will also make our buhay easier kung may idadagdag tayo na categories or ways to vibe check our matches like if magdagdag tayo ng tags na functionality other than the categories or reviews.
