@@ -23,9 +23,115 @@ Other than rating them based on the given categories, users can also leave a rev
 ### 1. Creational Design Pattern
 * **Name of Pattern:** Creational - Factory
 * **Concept in Conyo:**
+
+  So yung ginagawa ng Factory Design Pattern is ini-encapsulate niya yung object creation. Instead na ang app ang bahala mag-decide kung anong object ang gagawin every time, we use a ReviewFactory to handle that process.
+
+  In Dateboxd, users can rate their matches using different categories such as Response Time, Conversation Quality, Profile Accuracy, Digital Respect, and Vibe Consistency.
+
+  Instead of writing multiple if-else conditions in different parts of the app to create each type of review, the app simply calls the factory method and passes the category.
+
+  Parang sinasabi lang ng app:
+  “Factory, gumawa ka ng review object for this category.”
+
+  Then the ReviewFactory na bahala mag-decide kung anong specific class (e.g., ResponseTimeReview, ConversationQualityReview, etc.) ang gagawin.
 * **Visual Diagram:**
+
+#### Without Factory
+```mermaid
+flowchart TD
+A[User submits review] --> B{Category}
+B -->|Response Time| C[ResponseTimeReview]
+B -->|Conversation| D[ConversationQualityReview]
+B -->|Profile| E[ProfileAccuracyReview]
+B -->|Respect| F[DigitalRespectReview]
+B -->|Vibe| G[VibeConsistencyReview]
+```
+
+#### With Factory
+```mermaid
+flowchart TD
+A[User submits review] --> B[ReviewFactory]
+B --> C{Determine Type}
+C --> D[ResponseTimeReview]
+C --> E[ConversationQualityReview]
+C --> F[ProfileAccuracyReview]
+C --> G[DigitalRespectReview]
+C --> H[VibeConsistencyReview]
+```
+
 * **Why it Works Nga:**
+
+  Without using the Factory Pattern, the app needs to repeatedly use conditional (`if-else`) logic in multiple parts of the system (such as submitting reviews, editing ratings, and processing vibe scores) to determine which review object to create.  
+
+  This leads to several disadvantages:
+
+  - duplicated logic across different features  
+  - tight coupling between the app and specific review classes  
+  - difficult maintenance when adding new categories  
+
+  In Dateboxd, since there are multiple review categories, this makes the system harder to manage and increases the risk of errors when updating the app.  
+
+  With the Factory Pattern, all object creation is centralized in the ReviewFactory. The app no longer needs to know the exact class being instantiated and simply requests a review object based on the category.  
+
+  This reduces coupling, eliminates repeated logic, and makes the system easier to maintain and extend. If a new category is added, only the factory needs to be updated instead of modifying multiple parts of the application.
 * **Pseudocode:**
+```
+interface Review {
+    void submitReview();
+}
+
+class ResponseTimeReview implements Review {
+    public void submitReview() {
+        System.out.println("Processing response time review");
+    }
+}
+
+class ConversationQualityReview implements Review {
+    public void submitReview() {
+        System.out.println("Processing conversation quality review");
+    }
+}
+
+class ProfileAccuracyReview implements Review {
+    public void submitReview() {
+        System.out.println("Processing profile accuracy review");
+    }
+}
+
+class DigitalRespectReview implements Review {
+    public void submitReview() {
+        System.out.println("Processing digital respect review");
+    }
+}
+
+class VibeConsistencyReview implements Review {
+    public void submitReview() {
+        System.out.println("Processing vibe consistency review");
+    }
+}
+
+class ReviewFactory {
+    public static Review createReview(String type) {
+        if (type.equals("response_time")) return new ResponseTimeReview();
+        else if (type.equals("conversation")) return new ConversationQualityReview();
+        else if (type.equals("profile")) return new ProfileAccuracyReview();
+        else if (type.equals("respect")) return new DigitalRespectReview();
+        else if (type.equals("vibe")) return new VibeConsistencyReview();
+        else return null;
+    }
+}
+
+class App {
+    public static void submitUserReview(String type) {
+        Review review = ReviewFactory.createReview(type);
+        if (review != null) {
+            review.submitReview();
+        } else {
+            System.out.println("Invalid review type");
+        }
+    }
+}
+```
 
 ### 2. Behavioral Design Pattern
 * **Name of Pattern:** Behavioral - Strategy
@@ -35,30 +141,28 @@ Other than rating them based on the given categories, users can also leave a rev
   
 * **Visual Diagram:**
 
-  ```mermaid
-  flowchart TD
+#### Without Factory
+```mermaid
+flowchart TD
+A[User submits review] --> B{Category?}
+B -->|Response Time| C[Create ResponseTimeReview]
+B -->|Conversation| D[Create ConversationQualityReview]
+B -->|Profile| E[Create ProfileAccuracyReview]
+B -->|Respect| F[Create DigitalRespectReview]
+B -->|Vibe| G[Create VibeConsistencyReview]
+```
 
-  A[Start] --> B[Load Match Reviews]
-
-  B --> C{Select Scoring Strategy}
-
-  C -->|Basic Average| D[Use BasicAverageStrategy]
-  C -->|Weighted Trust| E[Use WeightedTrustStrategy]
-  C -->|Recent Boost| F[Use RecentBoostStrategy]
-
-  D --> G[Calculate Vibe Score]
-  E --> G
-  F --> G
-
-  G --> H[Display Final Vibe Score]
-
-  H --> I{Change Strategy?}
-
-  I -->|Yes| C
-  I -->|No| J[End]
-  ```
-  
-
+#### With Factory
+```mermaid
+flowchart TD
+A[User submits review] --> B[ReviewFactory]
+B --> C{Determine Type}
+C --> D[ResponseTimeReview]
+C --> E[ConversationQualityReview]
+C --> F[ProfileAccuracyReview]
+C --> G[DigitalRespectReview]
+C --> H[VibeConsistencyReview]
+```
 
   
 * **Why it Works Nga:**
